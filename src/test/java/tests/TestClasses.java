@@ -65,8 +65,9 @@ public class TestClasses {
     @After
     public void afterMethod() {
         System.out.println("This is the method to run after tests");
-        driver.close();
-
+        if(driver!=null) {
+            driver.close();
+        }
     }
 
     @AfterClass

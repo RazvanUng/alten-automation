@@ -1,5 +1,6 @@
 package utils;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
@@ -11,40 +12,46 @@ import static utils.Constants.DRIVERS_PATH;
 
 public class BrowserUtilis {
 
-    public static Browsers getBrowsers(String browser){
-        switch (browser.toLowerCase()){
-            case"firefox":{
-                return Browsers.FIREFOX;
-            }
-            case"chrome":{
-                return Browsers.CHROME;
-            }
-            case "edge":{
-                return Browsers.EDGE;
-            }
-            default:{
-                return null;
-            }
-        }
-    }
+    //only for reference -> this is deprecated
+//    public static Browsers getBrowsersOld(String browser){
+//        switch (browser.toLowerCase()){
+//            case"firefox":{
+//                return Browsers.FIREFOX;
+//            }
+//            case"chrome":{
+//                return Browsers.CHROME;
+//            }
+//            case "edge":{
+//                return Browsers.EDGE;
+//            }
+//            default:{
+//                throw new IllegalArgumentException("Browser not supported");
+//            }
+//        }
+//    }
 
     public static WebDriver getDriver(String browser) {
         WebDriver driver = null;
         switch (browser.toLowerCase()) {
             case "chrome": {
-                System.setProperty("webdriver.chrome.driver", DRIVERS_PATH + "chromedriver.exe");
+                if (Constants.CURRENT_ENV.equals("local")) {
+                    //TODO :continue environment selection at the automation env course!
+                    WebDriverManager.chromedriver().setup();
+                } else {
+                    System.setProperty("webdriver.chrome.driver", DRIVERS_PATH + "chromedriver.exe");
+                }
                 driver = new ChromeDriver();
                 break;
             }
 
 
             case "firefox": {
-                System.setProperty("webdriver.gecko.driver", DRIVERS_PATH + "geckodriver.exe");
+                WebDriverManager.firefoxdriver().setup();
                 driver = new FirefoxDriver();
                 break;
             }
             case "edge": {
-                System.setProperty("webdriver.edge.driver", DRIVERS_PATH + "msedgedriver.exe");
+                WebDriverManager.edgedriver().setup();
                 driver = new EdgeDriver();
                 break;
             }
