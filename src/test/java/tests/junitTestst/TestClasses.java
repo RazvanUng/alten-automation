@@ -1,42 +1,28 @@
-package tests;
+package tests.junitTestst;
 
 import org.junit.*;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.edge.EdgeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import utils.Browsers;
 
-import static utils.BrowserUtilis.getDriver;
-import static utils.Constants.CURRENT_BROWSER;
-import static utils.Constants.URL_BASED;
-
-public class TestClasses {
-
-    WebDriver driver;
-
-    @BeforeClass
-    //trebuie sa le facem statice ca ruleaza o singura data
-    public static void beforeClass(){
-        System.out.println("This runs just once before all tests in the same class");
-    }
+public class TestClasses  extends BaseClassJunit{
 
 
 
-    @Before
 
-    public void beforeTest() {
-        System.out.println("This surely runs each time before any test!!");
-        //  WebDriver driver = new ChromeDriver();
-        driver = getDriver(CURRENT_BROWSER);
-        driver.navigate().to(URL_BASED);
-    }
-
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void Test01() {
         System.out.println("This is my very first test");
+        String s ="Alex";
+        Assert.assertEquals(s, "Alex");
+        int a = 20; int b = 30;
+        Assert.assertEquals("Comparing the sum",50,a+b);
+        Assert.assertNotNull("Exista obiectul nostru?", s);
+        doSomething();
 
 
+
+    }
+
+    private void doSomething() throws IllegalArgumentException{
+        throw new IllegalArgumentException("Illegal");
     }
 
  //   @Test
