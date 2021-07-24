@@ -13,22 +13,22 @@ import static utils.Constants.DRIVERS_PATH;
 public class BrowserUtilis {
 
     //only for reference -> this is deprecated
-//    public static Browsers getBrowsersOld(String browser){
-//        switch (browser.toLowerCase()){
-//            case"firefox":{
-//                return Browsers.FIREFOX;
-//            }
-//            case"chrome":{
-//                return Browsers.CHROME;
-//            }
-//            case "edge":{
-//                return Browsers.EDGE;
-//            }
-//            default:{
-//                throw new IllegalArgumentException("Browser not supported");
-//            }
-//        }
-//    }
+    public static Browsers getBrowsers(String browser){
+        switch (browser.toLowerCase()){
+            case"firefox":{
+                return Browsers.FIREFOX;
+            }
+            case"chrome":{
+                return Browsers.CHROME;
+            }
+            case "edge":{
+                return Browsers.EDGE;
+            }
+            default:{
+                throw new IllegalArgumentException("Browser not supported");
+            }
+        }
+    }
 
     public static WebDriver getDriver(String browser) {
         WebDriver driver = null;

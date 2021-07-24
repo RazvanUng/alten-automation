@@ -35,7 +35,7 @@ import tests.testNgTests.BaseClass;
 
         @Override
         public void onTestSkipped(ITestResult result) {
-            System.out.println(result.getMethod().getMethodName()+ "failed ");
+            System.out.println(result.getMethod().getMethodName()+ "skipped");
             test.get().fail(result.getThrowable());
         }
 
