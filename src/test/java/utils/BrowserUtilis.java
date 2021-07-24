@@ -8,25 +8,36 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.util.Locale;
 
+import static utils.Constants.CURRENT_ENV;
 import static utils.Constants.DRIVERS_PATH;
 
 public class BrowserUtilis {
 
     //only for reference -> this is deprecated
-    public static Browsers getBrowsers(String browser){
-        switch (browser.toLowerCase()){
-            case"firefox":{
+    public static Browsers getBrowsers(String browser) {
+        switch (browser.toLowerCase()) {
+            case "firefox": {
                 return Browsers.FIREFOX;
             }
-            case"chrome":{
+            case "chrome": {
                 return Browsers.CHROME;
             }
-            case "edge":{
+            case "edge": {
                 return Browsers.EDGE;
             }
-            default:{
+            default: {
                 throw new IllegalArgumentException("Browser not supported");
             }
+        }
+    }
+
+    private static boolean isWebDriverManagerRun() {
+        if (Constants.CURRENT_ENV.toLowerCase().equals("local")) {
+            Log.debug("Running on environment" + CURRENT_ENV + " with WebDriverManager");
+            return true;
+        } else {
+            Log.debug("Running on environment" + CURRENT_ENV + " with System propety of the browser");
+            return false;
         }
     }
 
@@ -34,8 +45,7 @@ public class BrowserUtilis {
         WebDriver driver = null;
         switch (browser.toLowerCase()) {
             case "chrome": {
-                if (Constants.CURRENT_ENV.equals("local")) {
-                    //TODO :continue environment selection at the automation env course!
+                if (isWebDriverManagerRun()) {
                     WebDriverManager.chromedriver().setup();
                 } else {
                     System.setProperty("webdriver.chrome.driver", DRIVERS_PATH + "chromedriver.exe");
@@ -46,19 +56,29 @@ public class BrowserUtilis {
 
 
             case "firefox": {
-                WebDriverManager.firefoxdriver().setup();
+                if (isWebDriverManagerRun()) {
+                    WebDriverManager.firefoxdriver().setup();
+                } else {
+                    System.setProperty("webdriver.firefox.driver", DRIVERS_PATH + "geckodriver.exe");
+                }
                 driver = new FirefoxDriver();
                 break;
             }
             case "edge": {
-                WebDriverManager.edgedriver().setup();
+                if (isWebDriverManagerRun()) {
+                    WebDriverManager.edgedriver().setup();
+                } else {
+                    System.setProperty("webdriver.edge.driver", DRIVERS_PATH + "msedgedriver.exe");
+                }
                 driver = new EdgeDriver();
                 break;
             }
             default: {
+
                 throw new IllegalArgumentException("The value provided for the browser type is illegal: " + browser);
             }
         }
+        Log.info("The current browser running is " + browser);
         return driver;
     }
 }

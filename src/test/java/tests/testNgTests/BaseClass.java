@@ -7,6 +7,8 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
+import utils.ConfigReader;
+import utils.Log;
 
 import static utils.BrowserUtilis.getDriver;
 import static utils.Constants.CURRENT_BROWSER;
@@ -17,7 +19,8 @@ public class BaseClass {
 
     @BeforeClass
     public void beforeAllTests(){
-        System.out.println("BEFORE CLASS EXECTUION");
+        Log.info("Running before tests");
+       // ConfigReader.readConfigFile();
     }
 
 
@@ -41,6 +44,6 @@ public class BaseClass {
     @AfterClass
 
     public void afterAllTests(){
-        System.out.println("AFTER CLASS EXECUTION");
+        Log.info("AFTER CLASS EXECUTION");
     }
 }
