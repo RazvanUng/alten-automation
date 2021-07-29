@@ -1,6 +1,7 @@
-package tests.testNgTests;
+package tests.testNgTests.demo;
 
 import org.testng.annotations.Test;
+import tests.testNgTests.BaseClass;
 import utils.BrowserUtilis;
 import utils.Constants;
 

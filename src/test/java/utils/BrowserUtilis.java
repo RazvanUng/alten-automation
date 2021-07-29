@@ -3,10 +3,14 @@ package utils;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+import java.io.File;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import static utils.Constants.CURRENT_ENV;
 import static utils.Constants.DRIVERS_PATH;
@@ -32,6 +36,9 @@ public class BrowserUtilis {
     }
 
     private static boolean isWebDriverManagerRun() {
+        if(ConfigReader.WEB_DRIVER_MANAGER){
+            return true;
+        }
         if (Constants.CURRENT_ENV.toLowerCase().equals("local")) {
             Log.debug("Running on environment" + CURRENT_ENV + " with WebDriverManager");
             return true;
@@ -50,7 +57,21 @@ public class BrowserUtilis {
                 } else {
                     System.setProperty("webdriver.chrome.driver", DRIVERS_PATH + "chromedriver.exe");
                 }
-                driver = new ChromeDriver();
+                ChromeOptions chromeOptions = new ChromeOptions();
+                /*how to add an extension(careful on headless)*/
+               // chromeOptions.addExtensions(new File(Constants.EXTENSIONS_PATH+"extension_9_8_3_0.crx"));
+                /*start browser maximized*/
+                chromeOptions.addArguments("--start-maximized");
+                /*le ruleaza in background fara a mai deschide browserul*/
+                chromeOptions.setHeadless(true);
+                /*change download default directory*/
+                Map<String, Object> prefs = new HashMap<>();
+                prefs.put("downloa.default_directory", Constants.DOWNLOAD_PATH);
+                chromeOptions.setExperimentalOption("prefs", prefs);
+
+                //trebuie sa punem optiunile cand instantiem chromeDriverul
+                //mereu instantierea driverului la final
+                driver = new ChromeDriver(chromeOptions);
                 break;
             }
 
@@ -74,6 +95,7 @@ public class BrowserUtilis {
                 break;
             }
             default: {
+                Log.fatal("Illegal argument for browser "+browser );
 
                 throw new IllegalArgumentException("The value provided for the browser type is illegal: " + browser);
             }
