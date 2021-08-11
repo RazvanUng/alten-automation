@@ -5,7 +5,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
 import java.util.HashMap;
@@ -62,8 +66,14 @@ public class BrowserUtilis {
                // chromeOptions.addExtensions(new File(Constants.EXTENSIONS_PATH+"extension_9_8_3_0.crx"));
                 /*start browser maximized*/
                 chromeOptions.addArguments("--start-maximized");
+
+
                 /*le ruleaza in background fara a mai deschide browserul*/
                 chromeOptions.setHeadless(true);
+
+                //chromeOptions.addArguments("--headeless");-> acelasi lucru
+
+
                 /*change download default directory*/
                 Map<String, Object> prefs = new HashMap<>();
                 prefs.put("downloa.default_directory", Constants.DOWNLOAD_PATH);
@@ -82,7 +92,27 @@ public class BrowserUtilis {
                 } else {
                     System.setProperty("webdriver.firefox.driver", DRIVERS_PATH + "geckodriver.exe");
                 }
-                driver = new FirefoxDriver();
+                FirefoxProfile firefoxProfile = new FirefoxProfile();
+
+                /* add extensions*/
+
+                firefoxProfile.addExtension(new File(Constants.EXTENSIONS_PATH+"metamask-9.8.2-an+fx.xpi"));
+
+                /*Deprecated*/
+                //DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+                //desiredCapabilities.setCapability(FirefoxDriver.PROFILE,firefoxProfile);
+
+                FirefoxOptions firefoxOptions = new FirefoxOptions();
+
+                /* start maximized*/
+                firefoxOptions.addArguments(("--start-maximized"));
+
+
+                /* change download default directory*/
+
+                firefoxProfile.setPreference("browser.download.dir",Constants.DOWNLOAD_PATH);
+                firefoxOptions.setProfile(firefoxProfile);
+                driver = new FirefoxDriver(firefoxOptions);
                 break;
             }
             case "edge": {
@@ -91,6 +121,10 @@ public class BrowserUtilis {
                 } else {
                     System.setProperty("webdriver.edge.driver", DRIVERS_PATH + "msedgedriver.exe");
                 }
+
+                EdgeOptions edgeOptions = new EdgeOptions();
+                edgeOptions.setCapability("args","['start-maximized']");
+
                 driver = new EdgeDriver();
                 break;
             }

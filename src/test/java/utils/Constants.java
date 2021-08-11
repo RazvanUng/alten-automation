@@ -9,6 +9,7 @@ public class Constants {
 
     public static final String CONFIG_PATH ="";
     public static final String CONFIG_FILE ="config.properties";
+    public static final String SCREENSHOT_PATH = "screenshots/";
 
 
     public static final String RESOURCES_PATH="src/test/resources/";

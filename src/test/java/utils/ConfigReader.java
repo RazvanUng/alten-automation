@@ -10,6 +10,7 @@ public class ConfigReader {
     public static String ENV;
     public static String BROWSER;
     public static boolean WEB_DRIVER_MANAGER;
+    public static boolean HEADLESS_MODE;
 
 
     public static void readConfigFile() {
@@ -24,6 +25,8 @@ public class ConfigReader {
             ENV = properties.getProperty("CURRENT_ENV");
             BROWSER = properties.getProperty("RUN_BROWSER");
             WEB_DRIVER_MANAGER = Boolean.parseBoolean(properties.getProperty("WEB_DRIVER_MANAGER"));
+            HEADLESS_MODE = Boolean.parseBoolean(properties.getProperty("START_HEADLESS"));
+
 
             Log.info(URL);
 
