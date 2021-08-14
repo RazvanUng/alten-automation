@@ -68,8 +68,8 @@ public class BrowserUtilis {
                 chromeOptions.addArguments("--start-maximized");
 
 
-                /*le ruleaza in background fara a mai deschide browserul*/
-                chromeOptions.setHeadless(true);
+                /*le ruleaza in background fara a mai deschide browserul sau sa il deschida daca e false */
+                chromeOptions.setHeadless(false);
 
                 //chromeOptions.addArguments("--headeless");-> acelasi lucru
 
