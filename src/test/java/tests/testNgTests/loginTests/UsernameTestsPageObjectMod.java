@@ -1,15 +1,19 @@
 package tests.testNgTests.loginTests;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openqa.selenium.support.PageFactory;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import tests.testNgTests.BaseClass;
+import tests.testNgTests.loginTests.models.LoginModel;
 import tests.testNgTests.loginTests.pages.LoginPage;
 import utils.Constants;
 import utils.GeneralUtils;
 import utils.Log;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -29,6 +33,7 @@ public class UsernameTestsPageObjectMod  extends BaseClass {
         return dp.iterator();
 
     }
+
 
     @Test
     public void basicAuthTest(){
@@ -50,6 +55,33 @@ public class UsernameTestsPageObjectMod  extends BaseClass {
         loginPage.validateUserError(userError);
 
 
+
+    }
+    @DataProvider(name = "jsonDp")
+    public Iterator<Object[]> jsonDp(){
+        Collection<Object[]>dp = new ArrayList<>();
+        ObjectMapper mapper = new ObjectMapper();
+        File f = new File("src\\test\\resources\\dataFiles\\testdata.json");
+        try {
+            LoginModel loginModel = mapper.readValue(f,LoginModel.class);
+            //citeste din fisier un loginModel
+            dp.add(new Object[] {loginModel});
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return dp.iterator();
+    }
+
+    @Test(dataProvider = "jsonDp")
+    public void jsonTest(LoginModel loginModel){
+      //  System.out.println(loginModel.getAccount().getUsername());
+       // System.out.println(loginModel.getAccount().getPassword());
+        String username = loginModel.getAccount().getUsername();
+        String password = loginModel.getAccount().getPassword();
+        driver.get(Constants.URL_BASED2+"#/login");
+        LoginPage loginPage = PageFactory.initElements(driver,LoginPage.class);
+        loginPage.login(username, password);
+        loginPage.validateErrors(loginModel.getUserError(), loginModel.getPasswordError(), loginModel.getGeneralError());
 
     }
 }

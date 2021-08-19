@@ -6,6 +6,7 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import tests.testNgTests.BaseClass;
+import tests.testNgTests.loginTests.models.AccountModel;
 import utils.Constants;
 import utils.GeneralUtils;
 
@@ -323,6 +324,10 @@ public class UsernameTests extends BaseClass {
         //submit the data and verify general message
         WebElement generalErrorText = driver.findElement(By.cssSelector("#login-form > div:nth-child(3) > div:nth-child(1)"));
         Assert.assertEquals(generalErrorText.getText(), generalError);
+
+//        AccountModel accountModel = new AccountModel("aaa","bbb");
+//        accountModel.getUsername();
+
 
 
     }

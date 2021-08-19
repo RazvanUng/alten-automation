@@ -1,5 +1,6 @@
 package tests.testNgTests.loginTests.pages;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
@@ -60,7 +61,15 @@ public class LoginPage {
     }
 
     public void validateUserError(String user){
-        Assert.assertEquals(userError.getText(),userError);
+        Assert.assertEquals(userError.getText(), user);
+        System.out.println(userError.getText());
+    }
+
+    public void validateErrors(String userErr, String passErr, String genError){
+        //parametri trebuie sa fie diferiti ca nume ca cei globali, altfel le suprascrie
+       Assert.assertEquals(userError.getText(), userErr);
+       Assert.assertEquals(passError.getText(), passErr);
+       Assert.assertEquals(generalError.getText(), genError);
     }
 
 }
