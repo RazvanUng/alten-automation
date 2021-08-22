@@ -1,0 +1,10 @@
+<loginModel>
+	<account>
+		<username>dingo</username>
+		<password>dingopassword</password>
+	</account>
+
+	<userError/>
+	<passwordError/>
+	<generalError> </generalError>
+</loginModel>
