@@ -8,9 +8,11 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import tests.testNgTests.BaseClass;
+import tests.testNgTests.loginTests.models.AccountModel;
 import tests.testNgTests.loginTests.models.LoginModel;
 import tests.testNgTests.loginTests.pages.LoginPage;
 import utils.Constants;
+import utils.ExcelReader;
 import utils.GeneralUtils;
 import utils.Log;
 
@@ -21,10 +23,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class UsernameTestsPageObjectMod extends BaseClass {
 
@@ -140,9 +139,9 @@ public class UsernameTestsPageObjectMod extends BaseClass {
             CSVReader csvReader = new CSVReader(reader);
             List<String[]> csvData = csvReader.readAll();
             //practiclina csv e un vector de stringuri
-           dp.addAll(csvData);
+            dp.addAll(csvData);
 
-            } catch (IOException | CsvException ioException) {
+        } catch (IOException | CsvException ioException) {
             ioException.printStackTrace();
         }
 
@@ -150,10 +149,75 @@ public class UsernameTestsPageObjectMod extends BaseClass {
     }
 
     @Test(dataProvider = "csvDataProvider")
-    public void csvTest(String username, String password, String userErr, String passErr, String generalErr){
-        driver.get(Constants.URL_BASED2+"#/login");
+    public void csvTest(String username, String password, String userErr, String passErr, String generalErr) {
+        driver.get(Constants.URL_BASED2 + "#/login");
         LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
         loginPage.login(username, password);
-        loginPage.validateErrors(userErr,passErr,generalErr);
+        loginPage.validateErrors(userErr, passErr, generalErr);
     }
+
+    @DataProvider(name = "xlsxDataProvider")
+    public Iterator<Object[]> xlsxDp() {
+        Collection<Object[]> dp = new ArrayList<>();
+
+
+        try {
+            File f = new File("src\\test\\resources\\dataFiles\\testdata.xlsx");
+            String[][] excelData = ExcelReader.readExcelFile(f, "Sheet1", true, true);
+            //luam fiecare linie din excel si adaugam datele de pe fiecare linie intr-o lista
+            Collections.addAll(dp, excelData);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return dp.iterator();
+    }
+
+    @Test(dataProvider ="xlsxDataProvider")
+    public void xlsxTest(String username, String password, String userError, String passwordError, String generalError){
+        driver.get(Constants.URL_BASED2 + "#/login");
+        LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
+        loginPage.login(username,password);
+        loginPage.validateErrors(userError,passwordError, generalError);
+    }
+
+    /* Data provider with LoginModel for excel*/
+    @DataProvider(name = "xlsxDataProvider2")
+    public Iterator<Object[]> xlsxDp2() {
+        Collection<Object[]> dp = new ArrayList<>();
+
+
+        try {
+            File f = new File("src\\test\\resources\\dataFiles\\testdata.xlsx");
+            String[][] excelData = ExcelReader.readExcelFile(f, "Sheet1", true, true);
+            //luam fiecare linie din excel si adaugam datele de pe fiecare linie intr-o lista
+            for(int i =0;i< excelData.length;i++){
+                String username = excelData[i][0];
+                String password = excelData[i][1];
+                String userError = excelData[i][2];
+                String passwordError = excelData[i][3];
+                String generalError = excelData[i][4];
+                AccountModel accountModel = new AccountModel(username, password);
+                LoginModel loginModel = new LoginModel(accountModel, userError, passwordError, generalError);
+                dp.add( new Object[] {loginModel});
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return dp.iterator();
+    }
+
+    @Test(dataProvider = "xlsxDataProvider2")
+    public void xlsxModelTest(LoginModel loginModel){
+        driver.get(Constants.URL_BASED2 + "#/login");
+        LoginPage loginPage = PageFactory.initElements(driver,LoginPage.class);
+        String username = loginModel.getAccount().getUsername();
+        String password = loginModel.getAccount().getUsername();
+        loginPage.login(username,password);
+        loginPage.validateErrors(loginModel.getUserError(), loginModel.getPasswordError(), loginModel.getGeneralError());
+    }
+
 }
