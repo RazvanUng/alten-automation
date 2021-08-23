@@ -1,6 +1,7 @@
 package tests.testNgTests.loginTests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mysql.cj.xdevapi.Result;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import org.openqa.selenium.support.PageFactory;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.*;
 import java.util.*;
 
 public class UsernameTestsPageObjectMod extends BaseClass {
@@ -174,12 +176,12 @@ public class UsernameTestsPageObjectMod extends BaseClass {
         return dp.iterator();
     }
 
-    @Test(dataProvider ="xlsxDataProvider")
-    public void xlsxTest(String username, String password, String userError, String passwordError, String generalError){
+    @Test(dataProvider = "xlsxDataProvider")
+    public void xlsxTest(String username, String password, String userError, String passwordError, String generalError) {
         driver.get(Constants.URL_BASED2 + "#/login");
         LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
-        loginPage.login(username,password);
-        loginPage.validateErrors(userError,passwordError, generalError);
+        loginPage.login(username, password);
+        loginPage.validateErrors(userError, passwordError, generalError);
     }
 
     /* Data provider with LoginModel for excel*/
@@ -192,7 +194,7 @@ public class UsernameTestsPageObjectMod extends BaseClass {
             File f = new File("src\\test\\resources\\dataFiles\\testdata.xlsx");
             String[][] excelData = ExcelReader.readExcelFile(f, "Sheet1", true, true);
             //luam fiecare linie din excel si adaugam datele de pe fiecare linie intr-o lista
-            for(int i =0;i< excelData.length;i++){
+            for (int i = 0; i < excelData.length; i++) {
                 String username = excelData[i][0];
                 String password = excelData[i][1];
                 String userError = excelData[i][2];
@@ -200,7 +202,7 @@ public class UsernameTestsPageObjectMod extends BaseClass {
                 String generalError = excelData[i][4];
                 AccountModel accountModel = new AccountModel(username, password);
                 LoginModel loginModel = new LoginModel(accountModel, userError, passwordError, generalError);
-                dp.add( new Object[] {loginModel});
+                dp.add(new Object[]{loginModel});
             }
 
         } catch (Exception e) {
@@ -211,11 +213,54 @@ public class UsernameTestsPageObjectMod extends BaseClass {
     }
 
     @Test(dataProvider = "xlsxDataProvider2")
-    public void xlsxModelTest(LoginModel loginModel){
+    public void xlsxModelTest(LoginModel loginModel) {
         driver.get(Constants.URL_BASED2 + "#/login");
-        LoginPage loginPage = PageFactory.initElements(driver,LoginPage.class);
+        LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
         String username = loginModel.getAccount().getUsername();
         String password = loginModel.getAccount().getUsername();
+        loginPage.login(username, password);
+        loginPage.validateErrors(loginModel.getUserError(), loginModel.getPasswordError(), loginModel.getGeneralError());
+    }
+
+    @DataProvider(name = "sqlDp")
+    public Iterator<Object[]> sqlDp() {
+        Collection<Object[]> dp = new ArrayList<>();
+        String query = "SELECT * FROM altenautomation.login";
+
+        try {
+            Connection connection = DriverManager.getConnection(Constants.DB_JDBC, Constants.DB_USER, Constants.DB_PASSWORD);
+            System.out.println(Constants.DB_JDBC);
+            //creare de statement
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            while (resultSet.next()) {
+               // int id = resultSet.getInt("id");
+                String user = GeneralUtils.sanitizeNullString(resultSet.getString("username"));
+                String password = GeneralUtils.sanitizeNullString(resultSet.getString("password"));
+                String userError = GeneralUtils.sanitizeNullString(resultSet.getString("usernameError"));
+                String passwordError = GeneralUtils.sanitizeNullString(resultSet.getString("passwordError"));
+                String generalErr = GeneralUtils.sanitizeNullString(resultSet.getString("generalError"));
+                AccountModel am = new AccountModel(user, password);
+                LoginModel loginModel = new LoginModel(am, userError, passwordError, generalErr);
+                dp.add(new Object[]{loginModel});
+            }
+            //close connection
+            statement.close();
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+
+        return dp.iterator();
+    }
+    @Test(dataProvider = "sqlDp")
+    public void sqlDataTest(LoginModel loginModel){
+        driver.get(Constants.URL_BASED2+"#/login");
+        LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
+        String username = loginModel.getAccount().getUsername();
+        String password = loginModel.getAccount().getPassword();
         loginPage.login(username,password);
         loginPage.validateErrors(loginModel.getUserError(), loginModel.getPasswordError(), loginModel.getGeneralError());
     }

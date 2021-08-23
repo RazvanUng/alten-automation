@@ -69,7 +69,11 @@ public class LoginPage {
         //parametri trebuie sa fie diferiti ca nume ca cei globali, altfel le suprascrie
        Assert.assertEquals(userError.getText(), userErr);
        Assert.assertEquals(passError.getText(), passErr);
-       Assert.assertEquals(generalError.getText(), genError);
+       String gError =" ";
+       if(!genError.equals("")){
+           gError = genError;
+       }
+       Assert.assertEquals(generalError.getText(), gError);
     }
 
 }
